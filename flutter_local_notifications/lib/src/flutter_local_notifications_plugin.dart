@@ -91,16 +91,18 @@ class FlutterLocalNotificationsPlugin {
   /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
-    if (_platform.isAndroid) {
-      return await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.android,
-              onSelectNotification: onSelectNotification);
-    } else if (_platform.isIOS) {
-      return await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.ios,
-              onSelectNotification: onSelectNotification);
+    if (FlutterLocalNotificationsPlatform.instance == null) {
+      if (_platform.isAndroid) {
+        return await resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+            ?.initialize(initializationSettings?.android,
+            onSelectNotification: onSelectNotification);
+      } else if (_platform.isIOS) {
+        return await resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+            ?.initialize(initializationSettings?.ios,
+            onSelectNotification: onSelectNotification);
+      }
     }
     return true;
   }
