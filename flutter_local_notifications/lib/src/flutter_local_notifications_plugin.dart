@@ -46,6 +46,7 @@ class FlutterLocalNotificationsPlugin {
       FlutterLocalNotificationsPlugin.private(const LocalPlatform());
 
   final Platform _platform;
+  bool _initialized = false;
 
   /// Returns the underlying platform-specific implementation of given type [T], which
   /// must be a concrete subclass of [FlutterLocalNotificationsPlatform](https://pub.dev/documentation/flutter_local_notifications_platform_interface/latest/flutter_local_notifications_platform_interface/FlutterLocalNotificationsPlatform-class.html).
@@ -91,7 +92,8 @@ class FlutterLocalNotificationsPlugin {
   /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
-    if (FlutterLocalNotificationsPlatform.instance == null) {
+    if (!_initialized) {
+      _initialized = true;
       if (_platform.isAndroid) {
         return await resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
