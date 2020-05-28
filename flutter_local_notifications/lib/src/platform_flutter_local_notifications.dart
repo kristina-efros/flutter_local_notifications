@@ -62,7 +62,9 @@ class AndroidFlutterLocalNotificationsPlugin
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(AndroidInitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
-    _onSelectNotification = onSelectNotification;
+    if (_onSelectNotification == null) {
+      _onSelectNotification = onSelectNotification;
+    }
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
