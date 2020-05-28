@@ -35,16 +35,12 @@ class FlutterLocalNotificationsPlugin {
       : _platform = platform {
     if (platform.isAndroid) {
       if (_androidPlugin == null) {
-        FlutterLocalNotificationsPlatform.instance =
-            AndroidFlutterLocalNotificationsPlugin();
-      } else {
+        _androidPlugin = AndroidFlutterLocalNotificationsPlugin();
         FlutterLocalNotificationsPlatform.instance = _androidPlugin;
       }
     } else if (platform.isIOS) {
       if (_iosPlugin == null) {
-        FlutterLocalNotificationsPlatform.instance =
-            IOSFlutterLocalNotificationsPlugin();
-      } else {
+        _iosPlugin = IOSFlutterLocalNotificationsPlugin();
         FlutterLocalNotificationsPlatform.instance = _iosPlugin;
       }
     }
