@@ -34,11 +34,19 @@ class FlutterLocalNotificationsPlugin {
   FlutterLocalNotificationsPlugin.private(Platform platform)
       : _platform = platform {
     if (platform.isAndroid) {
-      FlutterLocalNotificationsPlatform.instance =
-          AndroidFlutterLocalNotificationsPlugin();
+      if (_androidPlugin == null) {
+        FlutterLocalNotificationsPlatform.instance =
+            AndroidFlutterLocalNotificationsPlugin();
+      } else {
+        FlutterLocalNotificationsPlatform.instance = _androidPlugin;
+      }
     } else if (platform.isIOS) {
-      FlutterLocalNotificationsPlatform.instance =
-          IOSFlutterLocalNotificationsPlugin();
+      if (_iosPlugin == null) {
+        FlutterLocalNotificationsPlatform.instance =
+            IOSFlutterLocalNotificationsPlugin();
+      } else {
+        FlutterLocalNotificationsPlatform.instance = _iosPlugin;
+      }
     }
   }
 
@@ -46,7 +54,8 @@ class FlutterLocalNotificationsPlugin {
       FlutterLocalNotificationsPlugin.private(const LocalPlatform());
 
   final Platform _platform;
-  bool _initialized = false;
+  AndroidFlutterLocalNotificationsPlugin _androidPlugin;
+  IOSFlutterLocalNotificationsPlugin _iosPlugin;
 
   /// Returns the underlying platform-specific implementation of given type [T], which
   /// must be a concrete subclass of [FlutterLocalNotificationsPlatform](https://pub.dev/documentation/flutter_local_notifications_platform_interface/latest/flutter_local_notifications_platform_interface/FlutterLocalNotificationsPlatform-class.html).
@@ -92,23 +101,16 @@ class FlutterLocalNotificationsPlugin {
   /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
-    SelectNotificationCallback result;
-    if (!_initialized) {
-      _initialized = true;
-      result = onSelectNotification;
-    } else {
-      result = null;
-    }
     if (_platform.isAndroid) {
       return await resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings?.android,
-          onSelectNotification: result);
+          onSelectNotification: onSelectNotification);
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings?.ios,
-          onSelectNotification: result);
+          onSelectNotification: onSelectNotification);
     }
     return true;
   }
